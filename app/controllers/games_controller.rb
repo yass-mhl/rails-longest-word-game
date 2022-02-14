@@ -9,7 +9,6 @@ class GamesController < ApplicationController
   end
 
   def score
-    raise
     # Récupere la réponse
     @answer = params[:word]
     # récupere la grille de lettre
@@ -19,19 +18,22 @@ class GamesController < ApplicationController
     # Si les lettres ne corresspondent pas = false
     if !good_letters?
       @result = "Sorry, but #{@answer.upcase} can’t be built out of #{grid_letters}."
+    # si le mot n'est pas dans l'api dico, false
     elsif !english_word
       @result = "Sorry but #{@answer.upcase} does not seem to be an English word."
+    # si tout est bon = true
     elsif good_letters? && english_word
       @result = "Congratulation! #{@answer.upcase} is a valid English word."
     end
   end
 
   private
-
+  # Parsing api JSON
   def english_word
     url = "https://wagon-dictionary.herokuapp.com/#{@answer}"
     dictionary = URI.open(url).read
     word = JSON.parse(dictionary)
+    # Return true si le mot existe et false si il n'existe pas
     word['found']
   end
 
